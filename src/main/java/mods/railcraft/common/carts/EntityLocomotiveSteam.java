@@ -22,17 +22,27 @@ import net.minecraft.world.InteractionResult;
 
 public class EntityLocomotiveSteam extends EntityLocomotive implements Container, MenuProvider {
 
-    private static final double MAX_SPEED    = 0.6;
-    private static final int    SLOT_FUEL    = 0;
     public  static final int    INV_SIZE     = 9;
+    private static final int    SLOT_BURN    = 0;  // actively burning slot
+    private static final int    SLOT_FUEL_A  = 1;  // fuel bunker A
+    private static final int    SLOT_FUEL_B  = 2;  // fuel bunker B
+    private static final int    SLOT_FUEL_C  = 3;  // fuel bunker C
     public  static final int    MAX_BURN     = 3200;
     public  static final int    MAX_STEAM_I  = 4000;
+    private static final double MAX_STEAM    = 4000.0;
+
+    // Speed → max velocity limits (blocks/tick)
+    private static final double[] SPEED_LIMITS = { 0.1, 0.2, 0.3, 0.6 };
+    // Speed → force boost per tick
+    private static final double[] SPEED_BOOSTS = { 0.003, 0.005, 0.008, 0.012 };
+    // Steam cost per tick when running (scales with speed)
+    private static final double[] STEAM_COST   = { 4.0, 6.0, 8.0, 10.0 };
 
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(INV_SIZE, ItemStack.EMPTY);
     private double steamAmount = 0.0;
     private int    burnTime    = 0;
-    private static final double MAX_STEAM = 4000.0;
 
+    // SyncData indices: 0=burnTime, 1=maxBurn, 2=steam, 3=maxSteam, 4=mode, 5=speed, 6=reverse
     private final ContainerData syncData = new ContainerData() {
         @Override public int get(int i) {
             return switch (i) {
@@ -41,6 +51,8 @@ public class EntityLocomotiveSteam extends EntityLocomotive implements Container
                 case 2 -> (int) steamAmount;
                 case 3 -> MAX_STEAM_I;
                 case 4 -> getMode().ordinal();
+                case 5 -> getSpeed().ordinal();
+                case 6 -> isReverse() ? 1 : 0;
                 default -> 0;
             };
         }
@@ -48,47 +60,67 @@ public class EntityLocomotiveSteam extends EntityLocomotive implements Container
             switch (i) {
                 case 0 -> burnTime = v;
                 case 2 -> steamAmount = v;
-                case 4 -> { try { setMode(Mode.values()[v]); } catch (ArrayIndexOutOfBoundsException ignored) {} }
+                case 4 -> { if (v >= 0 && v < LocoMode.VALUES.length)  setMode(LocoMode.VALUES[v]); }
+                case 5 -> { if (v >= 0 && v < LocoSpeed.VALUES.length) setSpeed(LocoSpeed.VALUES[v]); }
+                case 6 -> setReverse(v != 0);
             }
         }
-        @Override public int getCount() { return 5; }
+        @Override public int getCount() { return 7; }
     };
 
     public EntityLocomotiveSteam(EntityType<EntityLocomotiveSteam> type, Level level) {
         super(type, level);
+        // Default to SHUTDOWN — player must explicitly set a speed to start
     }
 
     @Override
-    public double getLocomotiveMaxSpeed() { return MAX_SPEED; }
+    public double getLocomotiveMaxSpeed() { return SPEED_LIMITS[LocoSpeed.MAX.ordinal()]; }
 
     @Override
     public Item getDropItem() { return RailcraftItems.LOCOMOTIVE_STEAM; }
 
     @Override
-    protected void applyThrottle() {
-        if (steamAmount >= 10.0) {
-            steamAmount -= 10.0;
-            double dx = getDeltaMovement().x;
-            double dz = getDeltaMovement().z;
-            double speed = Math.sqrt(dx * dx + dz * dz);
-            if (speed < MAX_SPEED) {
-                double boost = 0.01;
-                setDeltaMovement(getDeltaMovement().add(dx * boost, 0, dz * boost));
-            }
-        } else {
-            setMode(Mode.IDLE);
-        }
+    public void tick() {
+        super.tick();  // calls applyThrottle() when RUNNING
+        if (!level().isClientSide()) burnFuel();
+    }
 
+    private void burnFuel() {
+        if (isShutdown()) return;
         if (burnTime > 0) {
             burnTime--;
             steamAmount = Math.min(MAX_STEAM, steamAmount + 2.0);
         } else {
-            ItemStack fuel = inventory.get(SLOT_FUEL);
-            int fv = getFuelValue(fuel);
-            if (fv > 0) {
-                fuel.shrink(1);
-                burnTime = fv;
+            // Pull fuel: burn slot first, then bunker A→C
+            for (int i = SLOT_BURN; i <= SLOT_FUEL_C; i++) {
+                ItemStack fuel = inventory.get(i);
+                int fv = getFuelValue(fuel);
+                if (fv > 0) {
+                    fuel.shrink(1);
+                    burnTime = fv;
+                    break;
+                }
             }
+        }
+    }
+
+    @Override
+    protected void applyThrottle() {
+        int speedIdx = getSpeed().ordinal();
+        double cost = STEAM_COST[speedIdx];
+        if (steamAmount >= cost) {
+            steamAmount -= cost;
+            double yaw    = getYRot() * Math.PI / 180.0;
+            double dir    = isReverse() ? -1.0 : 1.0;
+            double boost  = SPEED_BOOSTS[speedIdx] * dir;
+            double maxSpd = SPEED_LIMITS[speedIdx];
+            double dx = getDeltaMovement().x + Math.cos(yaw) * boost;
+            double dz = getDeltaMovement().z + Math.sin(yaw) * boost;
+            double spd = Math.sqrt(dx * dx + dz * dz);
+            if (spd > maxSpd) { dx *= maxSpd / spd; dz *= maxSpd / spd; }
+            setDeltaMovement(dx, getDeltaMovement().y, dz);
+        } else {
+            setMode(LocoMode.IDLE);  // no steam — stall to idle; player can re-engage
         }
     }
 
@@ -103,7 +135,7 @@ public class EntityLocomotiveSteam extends EntityLocomotive implements Container
         super.addAdditionalSaveData(tag);
         tag.putDouble("steam", steamAmount);
         tag.putInt("burnTime", burnTime);
-        net.minecraft.world.ContainerHelper.saveAllItems(tag, inventory);
+        ContainerHelper.saveAllItems(tag, inventory);
     }
 
     @Override
@@ -111,7 +143,7 @@ public class EntityLocomotiveSteam extends EntityLocomotive implements Container
         super.readAdditionalSaveData(tag);
         steamAmount = tag.getDouble("steam");
         burnTime    = tag.getInt("burnTime");
-        net.minecraft.world.ContainerHelper.loadAllItems(tag, inventory);
+        ContainerHelper.loadAllItems(tag, inventory);
     }
 
     public double getSteamAmount() { return steamAmount; }
@@ -122,9 +154,7 @@ public class EntityLocomotiveSteam extends EntityLocomotive implements Container
 
     @Override
     public InteractionResult interact(Player player, InteractionHand hand) {
-        if (!level().isClientSide()) {
-            player.openMenu(this);
-        }
+        if (!level().isClientSide()) player.openMenu(this);
         return InteractionResult.sidedSuccess(level().isClientSide());
     }
 

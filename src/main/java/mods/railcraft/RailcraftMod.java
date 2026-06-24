@@ -1,6 +1,7 @@
 package mods.railcraft;
 
 import mods.railcraft.common.blocks.RailcraftBlocks;
+import mods.railcraft.common.network.RailcraftNetwork;
 import mods.railcraft.common.carts.RailcraftEntities;
 import mods.railcraft.common.creativetab.RailcraftCreativeTab;
 import mods.railcraft.common.fluids.RailcraftFluids;
@@ -31,6 +32,7 @@ public class RailcraftMod implements ModInitializer {
         RailcraftMenuTypes.register();
         RailcraftWorldGen.register();
         RailcraftCreativeTab.register();
+        RailcraftNetwork.registerServerReceivers();
 
         // Coke burns twice as long as coal (3200 ticks vs 1600)
         FuelRegistry registry = FuelRegistry.INSTANCE;

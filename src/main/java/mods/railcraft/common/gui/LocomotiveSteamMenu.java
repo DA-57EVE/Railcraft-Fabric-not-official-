@@ -9,13 +9,12 @@ import net.minecraft.world.item.ItemStack;
 
 public class LocomotiveSteamMenu extends AbstractContainerMenu {
 
-    // Slots 0-8: locomotive inventory; 9-35: player inv; 36-44: hotbar
-    // SyncData: 0=burnTime, 1=maxBurn, 2=steam, 3=maxSteam, 4=mode
+    // SyncData: 0=burnTime,1=maxBurn,2=steam,3=maxSteam,4=mode,5=speed,6=reverse
     private final Container container;
     private final ContainerData data;
 
     public LocomotiveSteamMenu(int syncId, Inventory playerInv) {
-        this(syncId, playerInv, new SimpleContainer(9), new SimpleContainerData(5));
+        this(syncId, playerInv, new SimpleContainer(9), new SimpleContainerData(7));
     }
 
     public LocomotiveSteamMenu(int syncId, Inventory playerInv, Container container, ContainerData data) {
@@ -23,23 +22,25 @@ public class LocomotiveSteamMenu extends AbstractContainerMenu {
         this.container = container;
         this.data = data;
         checkContainerSize(container, 9);
-        checkContainerDataCount(data, 5);
+        checkContainerDataCount(data, 7);
 
-        // Two fuel slots reusing the furnace texture's baked-in slot holes
-        addSlot(new Slot(container, 0, 56, 17));  // fuel — top slot (furnace input position)
-        addSlot(new Slot(container, 1, 56, 53));  // fuel — bottom slot (furnace fuel position)
+        // Slot positions match the original Railcraft GUI texture layout
+        addSlot(new Slot(container, 0, 116, 20));  // burn slot (currently burning)
+        addSlot(new Slot(container, 1,  80, 20));  // fuel bunker A
+        addSlot(new Slot(container, 2,  80, 38));  // fuel bunker B
+        addSlot(new Slot(container, 3,  80, 56));  // fuel bunker C
 
-        addPlayerInventory(playerInv);
+        // Player inventory — guiHeight=205: rows at 205-82=123, hotbar at 205-26=179
+        for (int row = 0; row < 3; row++)
+            for (int col = 0; col < 9; col++)
+                addSlot(new Slot(playerInv, col + row * 9 + 9, 8 + col * 18, 123 + row * 18));
+        for (int col = 0; col < 9; col++)
+            addSlot(new Slot(playerInv, col, 8 + col * 18, 179));
+
         addDataSlots(data);
     }
 
-    private void addPlayerInventory(Inventory inv) {
-        for (int row = 0; row < 3; row++)
-            for (int col = 0; col < 9; col++)
-                addSlot(new Slot(inv, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
-        for (int col = 0; col < 9; col++)
-            addSlot(new Slot(inv, col, 8 + col * 18, 142));
-    }
+    public Container getLocomotive() { return container; }
 
     @Override
     public boolean stillValid(Player player) { return container.stillValid(player); }
@@ -49,28 +50,30 @@ public class LocomotiveSteamMenu extends AbstractContainerMenu {
         return max > 0 ? burn * height / max : 0;
     }
 
-    public int getScaledSteam(int width) {
+    public int getScaledSteam(int height) {
         int steam = data.get(2), max = data.get(3);
-        return max > 0 ? steam * width / max : 0;
+        return max > 0 ? steam * height / max : 0;
     }
 
-    public int getSteam()    { return data.get(2); }
-    public int getMaxSteam() { return data.get(3); }
-    public int getMode()     { return data.get(4); }
+    public int getSteam()      { return data.get(2); }
+    public int getMaxSteam()   { return data.get(3); }
+    public int getMode()       { return data.get(4); }
+    public int getSpeed()      { return data.get(5); }
+    public boolean isReverse() { return data.get(6) != 0; }
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
-        // Slots: 0-1=fuel, 2-28=player inv, 29-37=hotbar
+        // 0-3=loco, 4-30=player inv, 31-39=hotbar
         Slot slot = slots.get(index);
         if (!slot.hasItem()) return ItemStack.EMPTY;
         ItemStack stack = slot.getItem(), original = stack.copy();
 
-        if (index < 2) {
-            if (!moveItemStackTo(stack, 2, 38, true)) return ItemStack.EMPTY;
+        if (index < 4) {
+            if (!moveItemStackTo(stack, 4, 40, true)) return ItemStack.EMPTY;
         } else {
-            if (!moveItemStackTo(stack, 0, 2, false)) {
-                if (index < 29) { if (!moveItemStackTo(stack, 29, 38, false)) return ItemStack.EMPTY; }
-                else             { if (!moveItemStackTo(stack,  2, 29, false)) return ItemStack.EMPTY; }
+            if (!moveItemStackTo(stack, 0, 4, false)) {
+                if (index < 31) { if (!moveItemStackTo(stack, 31, 40, false)) return ItemStack.EMPTY; }
+                else             { if (!moveItemStackTo(stack,  4, 31, false)) return ItemStack.EMPTY; }
             }
         }
 
