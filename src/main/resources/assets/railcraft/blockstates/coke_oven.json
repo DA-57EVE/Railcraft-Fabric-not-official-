@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "lit=false": {"model": "railcraft:block/coke_oven"},
+    "lit=true":  {"model": "railcraft:block/coke_oven_lit"}
+  }
+}

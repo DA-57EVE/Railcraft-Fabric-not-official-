@@ -1,0 +1,40 @@
+# Gradle
+.gradle/
+build/
+
+# Fabric Loom cache
+.loom-cache/
+
+# Minecraft run directory (world saves, logs, crash reports, options)
+run/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+
+# Eclipse
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# VS Code
+.vscode/
+
+# Claude Code session data
+.claude/
+
+# macOS
+.DS_Store

@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["SSS", "SSS", "SSS"],
+  "key": {"S": {"item": "railcraft:steel_ingot"}},
+  "result": {"item": "railcraft:steel_block", "count": 1}
+}

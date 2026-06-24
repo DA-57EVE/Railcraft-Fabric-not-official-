@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["I I", "ISI", "I I"],
+  "key": {
+    "I": {"item": "minecraft:iron_ingot"},
+    "S": {"item": "railcraft:tie_wood"}
+  },
+  "result": {"item": "railcraft:rail_standard", "count": 8}
+}

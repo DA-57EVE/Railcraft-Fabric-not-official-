@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "railcraft",
+  "version": "${version}",
+  "name": "Railcraft",
+  "description": "Extensive rail network and train system for Minecraft.",
+  "authors": [
+    "CovertJaguar",
+    "RailcraftPortTeam"
+  ],
+  "contact": {
+    "homepage": "https://www.railcraft.info",
+    "sources": "https://github.com/Railcraft/Railcraft"
+  },
+  "license": "LGPL-2.1",
+  "icon": "assets/railcraft/icon.png",
+  "accessWidener": "railcraft.accesswidener",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "mods.railcraft.RailcraftMod"
+    ],
+    "client": [
+      "mods.railcraft.client.RailcraftClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "fabric-api": "*",
+    "minecraft": "~1.20.1",
+    "java": ">=17"
+  }
+}

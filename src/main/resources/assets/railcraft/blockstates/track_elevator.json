@@ -1,0 +1,6 @@
+﻿{
+  "variants": {
+    "powered=false": { "model": "railcraft:block/track_iron_straight" },
+    "powered=true":  { "model": "railcraft:block/track_iron_straight" }
+  }
+}

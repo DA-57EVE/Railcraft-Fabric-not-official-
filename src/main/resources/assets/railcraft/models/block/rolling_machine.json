@@ -1,0 +1,8 @@
+﻿{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "side": "railcraft:block/rolling_machine_manual_side",
+    "top": "railcraft:block/rolling_machine_manual_top",
+    "bottom": "railcraft:block/rolling_machine_manual_bottom"
+  }
+}

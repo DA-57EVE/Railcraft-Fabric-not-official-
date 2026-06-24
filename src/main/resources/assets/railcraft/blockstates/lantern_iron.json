@@ -1,0 +1,6 @@
+﻿{
+  "variants": {
+    "hanging=false": { "model": "railcraft:block/lantern_iron" },
+    "hanging=true":  { "model": "railcraft:block/lantern_iron", "x": 180 }
+  }
+}

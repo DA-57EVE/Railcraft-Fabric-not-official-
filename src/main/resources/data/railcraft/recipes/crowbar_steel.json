@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [" S ", "S S", " S "],
+  "key": {"S": {"item": "railcraft:steel_ingot"}},
+  "result": {"item": "railcraft:crowbar_steel", "count": 1}
+}

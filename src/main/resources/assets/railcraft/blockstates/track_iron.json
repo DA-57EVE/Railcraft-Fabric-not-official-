@@ -1,0 +1,14 @@
+{
+  "variants": {
+    "shape=north_south":   {"model": "railcraft:block/track_iron_straight"},
+    "shape=east_west":     {"model": "railcraft:block/track_iron_straight", "y": 90},
+    "shape=ascending_east": {"model": "railcraft:block/track_iron_slope", "y": 90},
+    "shape=ascending_west": {"model": "railcraft:block/track_iron_slope", "y": 270},
+    "shape=ascending_north": {"model": "railcraft:block/track_iron_slope"},
+    "shape=ascending_south": {"model": "railcraft:block/track_iron_slope", "y": 180},
+    "shape=south_east":    {"model": "railcraft:block/track_iron_corner"},
+    "shape=south_west":    {"model": "railcraft:block/track_iron_corner", "y": 90},
+    "shape=north_west":    {"model": "railcraft:block/track_iron_corner", "y": 180},
+    "shape=north_east":    {"model": "railcraft:block/track_iron_corner", "y": 270}
+  }
+}

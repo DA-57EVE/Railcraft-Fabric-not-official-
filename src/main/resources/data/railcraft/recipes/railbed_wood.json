@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["TTT", "TTT"],
+  "key": {"T": {"item": "railcraft:tie_wood"}},
+  "result": {"item": "railcraft:railbed_wood", "count": 1}
+}

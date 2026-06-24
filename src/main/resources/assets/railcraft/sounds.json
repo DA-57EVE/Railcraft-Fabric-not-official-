@@ -1,0 +1,46 @@
+{
+  "entity.locomotive.steam.whistle": {
+    "category": "block",
+    "sounds": [{"name": "railcraft:entity/locomotive/steam_whistle", "volume": 1.0, "pitch": 1.0}]
+  },
+  "entity.locomotive.electric.whistle": {
+    "category": "block",
+    "sounds": [{"name": "railcraft:entity/locomotive/electric_whistle", "volume": 1.0, "pitch": 1.2}]
+  },
+  "item.crowbar.link": {
+    "category": "block",
+    "sounds": [{"name": "railcraft:item/crowbar_link", "volume": 0.5, "pitch": 1.0}]
+  },
+  "item.crowbar.remove": {
+    "category": "block",
+    "sounds": [{"name": "railcraft:item/crowbar_remove", "volume": 0.5, "pitch": 0.9}]
+  },
+  "block.track.place": {
+    "category": "block",
+    "sounds": [{"name": "railcraft:block/track_place", "volume": 0.6, "pitch": 1.0}]
+  },
+  "block.coke_oven.work": {
+    "category": "block",
+    "sounds": [{"name": "railcraft:block/coke_oven", "volume": 0.4, "pitch": 1.0}]
+  },
+  "block.boiler.burn": {
+    "category": "block",
+    "sounds": [{"name": "railcraft:block/boiler_burn", "volume": 0.5, "pitch": 1.0}]
+  },
+  "block.rolling_machine.running": {
+    "category": "block",
+    "sounds": [{"name": "railcraft:block/rolling_machine", "volume": 0.5, "pitch": 1.0}]
+  },
+  "block.rock_crusher.running": {
+    "category": "block",
+    "sounds": [{"name": "railcraft:block/rock_crusher", "volume": 0.6, "pitch": 1.0}]
+  },
+  "entity.tunnel_bore.running": {
+    "category": "neutral",
+    "sounds": [{"name": "railcraft:entity/tunnel_bore", "volume": 0.8, "pitch": 1.0}]
+  },
+  "block.charge.zapped": {
+    "category": "block",
+    "sounds": [{"name": "railcraft:block/charge_zap", "volume": 0.3, "pitch": 1.0}]
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "lit=false": {"model": "railcraft:block/blast_furnace"},
+    "lit=true":  {"model": "railcraft:block/blast_furnace_lit"}
+  }
+}
