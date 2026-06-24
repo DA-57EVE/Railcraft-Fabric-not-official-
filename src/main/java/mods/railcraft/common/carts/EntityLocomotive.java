@@ -5,6 +5,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public abstract class EntityLocomotive extends CartBase {
 
@@ -53,6 +54,14 @@ public abstract class EntityLocomotive extends CartBase {
     @Override
     public void tick() {
         super.tick();
+        // applyThrottle() is called from applyNaturalSlowdown(), which is inside
+        // AbstractMinecart.moveAlongTrack() — the correct hook point, server-side only.
+    }
+
+    @Override
+    protected void applyNaturalSlowdown() {
+        Vec3 v = getDeltaMovement();
+        setDeltaMovement(v.multiply(0.97, 0.0, 0.97));
         if (!level().isClientSide() && isRunning()) {
             applyThrottle();
         }

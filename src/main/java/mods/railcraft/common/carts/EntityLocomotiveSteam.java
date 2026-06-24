@@ -32,9 +32,9 @@ public class EntityLocomotiveSteam extends EntityLocomotive implements Container
     private static final double MAX_STEAM    = 4000.0;
 
     // Speed → max velocity limits (blocks/tick)
-    private static final double[] SPEED_LIMITS = { 0.1, 0.2, 0.3, 0.6 };
-    // Speed → force boost per tick
-    private static final double[] SPEED_BOOSTS = { 0.003, 0.005, 0.008, 0.012 };
+    private static final double[] SPEED_LIMITS = { 0.1, 0.2, 0.3, 0.4 };
+    // Speed → force added per tick (must overcome 3% drag from applyNaturalSlowdown)
+    private static final double[] SPEED_BOOSTS = { 0.04, 0.07, 0.10, 0.14 };
     // Steam cost per tick when running (scales with speed)
     private static final double[] STEAM_COST   = { 4.0, 6.0, 8.0, 10.0 };
 
@@ -106,22 +106,22 @@ public class EntityLocomotiveSteam extends EntityLocomotive implements Container
 
     @Override
     protected void applyThrottle() {
-        int speedIdx = getSpeed().ordinal();
-        double cost = STEAM_COST[speedIdx];
-        if (steamAmount >= cost) {
-            steamAmount -= cost;
-            double yaw    = getYRot() * Math.PI / 180.0;
-            double dir    = isReverse() ? -1.0 : 1.0;
-            double boost  = SPEED_BOOSTS[speedIdx] * dir;
-            double maxSpd = SPEED_LIMITS[speedIdx];
-            double dx = getDeltaMovement().x + Math.cos(yaw) * boost;
-            double dz = getDeltaMovement().z + Math.sin(yaw) * boost;
-            double spd = Math.sqrt(dx * dx + dz * dz);
-            if (spd > maxSpd) { dx *= maxSpd / spd; dz *= maxSpd / spd; }
-            setDeltaMovement(dx, getDeltaMovement().y, dz);
-        } else {
-            setMode(LocoMode.IDLE);  // no steam — stall to idle; player can re-engage
-        }
+        int si = getSpeed().ordinal();
+        if (steamAmount < STEAM_COST[si]) { setMode(LocoMode.IDLE); return; }
+        steamAmount -= STEAM_COST[si];
+
+        // In 1.20.1 the cart yaw is derived from atan2(old_z - new_z, old_x - new_x),
+        // so forward is (-cos(yaw), -sin(yaw)), opposite of 1.12.2 convention.
+        double yawRad = getYRot() * Math.PI / 180.0;
+        double dir    = isReverse() ? 1.0 : -1.0;  // flipped sign vs original
+        double boost  = SPEED_BOOSTS[si];
+        double maxSpd = SPEED_LIMITS[si];
+
+        double dx = getDeltaMovement().x + Math.cos(yawRad) * boost * dir;
+        double dz = getDeltaMovement().z + Math.sin(yawRad) * boost * dir;
+        double spd = Math.sqrt(dx * dx + dz * dz);
+        if (spd > maxSpd) { dx = dx * maxSpd / spd; dz = dz * maxSpd / spd; }
+        setDeltaMovement(dx, getDeltaMovement().y, dz);
     }
 
     private int getFuelValue(ItemStack stack) {
