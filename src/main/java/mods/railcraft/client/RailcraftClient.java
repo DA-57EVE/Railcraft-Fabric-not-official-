@@ -39,11 +39,12 @@ public class RailcraftClient implements ClientModInitializer {
                 RailcraftBlocks.TRACK_STRAP_IRON,
                 RailcraftBlocks.TRACK_ELEVATOR);
 
-        MenuScreens.register(RailcraftMenuTypes.COKE_OVEN,      CokeOvenScreen::new);
-        MenuScreens.register(RailcraftMenuTypes.BLAST_FURNACE,  BlastFurnaceScreen::new);
-        MenuScreens.register(RailcraftMenuTypes.ROLLING_MACHINE, RollingMachineScreen::new);
-        MenuScreens.register(RailcraftMenuTypes.STEAM_BOILER,   SteamBoilerScreen::new);
-        MenuScreens.register(RailcraftMenuTypes.ROCK_CRUSHER,   RockCrusherScreen::new);
+        MenuScreens.register(RailcraftMenuTypes.COKE_OVEN,        CokeOvenScreen::new);
+        MenuScreens.register(RailcraftMenuTypes.BLAST_FURNACE,   BlastFurnaceScreen::new);
+        MenuScreens.register(RailcraftMenuTypes.ROLLING_MACHINE,  RollingMachineScreen::new);
+        MenuScreens.register(RailcraftMenuTypes.STEAM_BOILER,    SteamBoilerScreen::new);
+        MenuScreens.register(RailcraftMenuTypes.ROCK_CRUSHER,    RockCrusherScreen::new);
+        MenuScreens.register(RailcraftMenuTypes.LOCOMOTIVE_STEAM, LocomotiveSteamScreen::new);
 
         EntityRendererRegistry.register(RailcraftEntities.CART_BASIC,          ctx -> new MinecartRenderer<EntityCartBasic>(ctx, ModelLayers.MINECART));
         EntityRendererRegistry.register(RailcraftEntities.CART_CHEST,          ctx -> new MinecartRenderer<EntityCartChest>(ctx, ModelLayers.MINECART));

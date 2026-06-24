@@ -9,11 +9,12 @@ import net.minecraft.world.inventory.MenuType;
 
 public class RailcraftMenuTypes {
 
-    public static MenuType<CokeOvenMenu>       COKE_OVEN;
-    public static MenuType<BlastFurnaceMenu>   BLAST_FURNACE;
-    public static MenuType<RollingMachineMenu> ROLLING_MACHINE;
-    public static MenuType<SteamBoilerMenu>    STEAM_BOILER;
-    public static MenuType<RockCrusherMenu>    ROCK_CRUSHER;
+    public static MenuType<CokeOvenMenu>          COKE_OVEN;
+    public static MenuType<BlastFurnaceMenu>      BLAST_FURNACE;
+    public static MenuType<RollingMachineMenu>    ROLLING_MACHINE;
+    public static MenuType<SteamBoilerMenu>       STEAM_BOILER;
+    public static MenuType<RockCrusherMenu>       ROCK_CRUSHER;
+    public static MenuType<LocomotiveSteamMenu>   LOCOMOTIVE_STEAM;
 
     public static void register() {
         COKE_OVEN = Registry.register(BuiltInRegistries.MENU,
@@ -31,5 +32,8 @@ public class RailcraftMenuTypes {
         ROCK_CRUSHER = Registry.register(BuiltInRegistries.MENU,
                 new ResourceLocation(RailcraftMod.MOD_ID, "rock_crusher"),
                 new MenuType<>(RockCrusherMenu::new, FeatureFlags.DEFAULT_FLAGS));
+        LOCOMOTIVE_STEAM = Registry.register(BuiltInRegistries.MENU,
+                new ResourceLocation(RailcraftMod.MOD_ID, "locomotive_steam"),
+                new MenuType<>(LocomotiveSteamMenu::new, FeatureFlags.DEFAULT_FLAGS));
     }
 }
